@@ -22,14 +22,13 @@ function Home() {
     const itemsPerPage = 10;
 
     const handleChange = (e) => setEmpId(e.target.value);
-    const handleStartDateChange = (e) => setStartDate(e.target.value);
-    const handleEndDateChange = (e) => setEndDate(e.target.value);
+    // const handleStartDateChange = (e) => setStartDate(e.target.value);
+    // const handleEndDateChange = (e) => setEndDate(e.target.value);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         console.log("Find button clicked!");
 
-        // Log the entered employee ID and the selected date range
         console.log("Employee ID:", empId);
         console.log("Start Date:", startDate);
         console.log("End Date:", endDate);
@@ -41,7 +40,6 @@ function Home() {
         setLoading(true);
         setError("");
 
-        // Construct the URL with the employee ID and selected date range
         let url = `http://localhost:4000/working-hours-id?empId=${empId}`;
 
         if (startDate) {
@@ -57,7 +55,7 @@ function Home() {
             console.log("Fetched Data:", data);
 
             if (response.ok) {
-                setEmployeeData(data);  // Save the complete data, including total_working_hours
+                setEmployeeData(data); 
             } else {
                 setError(data.error || "Something went wrong.");
             }
@@ -68,27 +66,23 @@ function Home() {
         }
     };
 
-    // Filter records based on selected date range
     const filteredRecords = employeeData.records ? employeeData.records.filter(record => {
-        const recordDate = new Date(record.date); // Convert the record date to Date object
-        const start = startDate ? new Date(startDate) : null; // Start date
-        const end = endDate ? new Date(endDate) : null; // End date
+        const recordDate = new Date(record.date); 
+        const start = startDate ? new Date(startDate) : null; 
+        const end = endDate ? new Date(endDate) : null;
 
-        // Log the dates for debugging
         console.log('Record Date:', recordDate, 'Start Date:', start, 'End Date:', end);
 
-        // If both startDate and endDate are provided, filter accordingly
         if (start && end) {
             return recordDate >= start && recordDate <= end;
         }
-        // If only one of the dates is provided, filter accordingly
         if (start) {
             return recordDate >= start;
         }
         if (end) {
             return recordDate <= end;
         }
-        return true; // If no date range is provided, return all records
+        return true; 
     }) : [];
 
     const records = filteredRecords || [];
@@ -134,7 +128,6 @@ function Home() {
                     </div>
                 </div>
 
-                {/* Date Range Picker */}
                 <div>
                     <label htmlFor="startDate" className="block text-sm font-medium text-gray-900">
                         Start Date
@@ -205,7 +198,7 @@ function Home() {
                                         {record.checkInCheckOutPairs.map((pair, idx) => {
                                             const checkInTime = new Date(pair.checkIn);
                                             const checkOutTime = new Date(pair.checkOut);
-                                            const workingHours = (checkOutTime - checkInTime) / (1000 * 60 * 60); // Convert milliseconds to hours
+                                            const workingHours = (checkOutTime - checkInTime) / (1000 * 60 * 60); 
 
                                             const isSameTime = checkInTime.getTime() === checkOutTime.getTime();
                                             const displayWorkingHours = isSameTime ? 0 : workingHours;
