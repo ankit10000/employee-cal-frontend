@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 
 const formatDate = (date) => {
-  const d = new Date(date);
-  if (isNaN(d)) return ""; 
+    const d = new Date(date);
+    if (isNaN(d)) return "";
 
-  const hours = String(d.getUTCHours()).padStart(2, '0');
-  const minutes = String(d.getUTCMinutes()).padStart(2, '0');
-  const seconds = String(d.getUTCSeconds()).padStart(2, '0');
+    const hours = String(d.getUTCHours()).padStart(2, '0');
+    const minutes = String(d.getUTCMinutes()).padStart(2, '0');
+    const seconds = String(d.getUTCSeconds()).padStart(2, '0');
 
-  return ` ${hours}:${minutes}:${seconds}`;
+    return ` ${hours}:${minutes}:${seconds}`;
 };
 
 function Home() {
@@ -16,20 +16,46 @@ function Home() {
     const [employeeData, setEmployeeData] = useState({});
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
     const handleChange = (e) => setEmpId(e.target.value);
+    const handleStartDateChange = (e) => setStartDate(e.target.value);
+    const handleEndDateChange = (e) => setEndDate(e.target.value);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!empId) return setError("Please enter an Employee ID.");
+        console.log("Find button clicked!");
+
+        // Log the entered employee ID and the selected date range
+        console.log("Employee ID:", empId);
+        console.log("Start Date:", startDate);
+        console.log("End Date:", endDate);
+
+        if (!empId) {
+            return setError("Please enter an Employee ID.");
+        }
+
         setLoading(true);
         setError("");
-    
+
+        // Construct the URL with the employee ID and selected date range
+        let url = `http://localhost:4000/working-hours-id?empId=${empId}`;
+
+        if (startDate) {
+            url += `&startDate=${startDate}`;
+        }
+        if (endDate) {
+            url += `&endDate=${endDate}`;
+        }
+
         try {
-            const response = await fetch(`http://localhost:4000/working-hours-id?empId=${empId}`);
+            const response = await fetch(url);
             const data = await response.json();
+            console.log("Fetched Data:", data);
+
             if (response.ok) {
                 setEmployeeData(data);  // Save the complete data, including total_working_hours
             } else {
@@ -41,8 +67,31 @@ function Home() {
             setLoading(false);
         }
     };
-    
-    const records = employeeData.records || [];
+
+    // Filter records based on selected date range
+    const filteredRecords = employeeData.records ? employeeData.records.filter(record => {
+        const recordDate = new Date(record.date); // Convert the record date to Date object
+        const start = startDate ? new Date(startDate) : null; // Start date
+        const end = endDate ? new Date(endDate) : null; // End date
+
+        // Log the dates for debugging
+        console.log('Record Date:', recordDate, 'Start Date:', start, 'End Date:', end);
+
+        // If both startDate and endDate are provided, filter accordingly
+        if (start && end) {
+            return recordDate >= start && recordDate <= end;
+        }
+        // If only one of the dates is provided, filter accordingly
+        if (start) {
+            return recordDate >= start;
+        }
+        if (end) {
+            return recordDate <= end;
+        }
+        return true; // If no date range is provided, return all records
+    }) : [];
+
+    const records = filteredRecords || [];
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -85,6 +134,33 @@ function Home() {
                     </div>
                 </div>
 
+                {/* Date Range Picker */}
+                <div>
+                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-900">
+                        Start Date
+                    </label>
+                    <input
+                        id="startDate"
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="block w-full mt-1 rounded-md bg-white px-3 py-1.5 text-base text-gray-900"
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="endDate" className="block text-sm font-medium text-gray-900">
+                        End Date
+                    </label>
+                    <input
+                        id="endDate"
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="block w-full mt-1 rounded-md bg-white px-3 py-1.5 text-base text-gray-900"
+                    />
+                </div>
+
                 <div>
                     <button
                         type="button"
@@ -93,6 +169,7 @@ function Home() {
                     >
                         {loading ? "Loading..." : "Find"}
                     </button>
+
                 </div>
             </div>
 
@@ -129,8 +206,7 @@ function Home() {
                                             const checkInTime = new Date(pair.checkIn);
                                             const checkOutTime = new Date(pair.checkOut);
                                             const workingHours = (checkOutTime - checkInTime) / (1000 * 60 * 60); // Convert milliseconds to hours
-                                            
-                                            // Check if CheckIn and CheckOut are the same
+
                                             const isSameTime = checkInTime.getTime() === checkOutTime.getTime();
                                             const displayWorkingHours = isSameTime ? 0 : workingHours;
 
@@ -180,7 +256,7 @@ function Home() {
 
             {records.length === 0 && !loading && !error && (
                 <div className="mt-4 text-center text-gray-500">
-                    <p>No data available for the given Employee ID.</p>
+                    <p>No data available for the given Employee ID within the selected date range.</p>
                 </div>
             )}
         </div>
