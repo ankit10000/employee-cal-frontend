@@ -20,7 +20,7 @@ function App() {
         <Route path="/working-hours" element={<WorkingHours />} /> {/* Path for Employee's working hours */}
         
         {/* Admin Routes */}
-        <Route path="/admin" element={<AllWorkingHours />} /> {/* Path for Admin to view all working hours */}
+        <Route path="/adminDashboard" element={<AllWorkingHours />} /> {/* Path for Admin to view all working hours */}
         
         {/* Default Route (Login) */}
         <Route path="/" element={<Login />} />
