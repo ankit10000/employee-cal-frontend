@@ -31,7 +31,7 @@ function Home() {
 const handleLogout = () => {
     localStorage.removeItem('authToken');
     setToken(null);
-    window.location.replace('/login') // Refresh the page after logout
+    window.location.replace('/') // Refresh the page after logout
 };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +42,7 @@ const handleLogout = () => {
     setLoading(true);
     setError("");
 
-    let url = `https://employee-cal.onrender.com/working-hours?empId=${empId}`;
+    let url = `http://localhost:4000/working-hours?empId=${empId}`;
 
     if (startDate) {
       url += `&startDate=${startDate}`;

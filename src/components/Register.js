@@ -5,6 +5,11 @@ function Register() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('employee'); // Default to 'employee'
+  const [name, setName] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
+  const [address, setAddress] = useState('');
+  const [joiningDate, setJoiningDate] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -12,7 +17,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!userId || !password || !role) {
+    if (!userId || !password || !role || !name || !contactNumber || !address || !joiningDate || !email) {
       return setError('All fields are required');
     }
 
@@ -20,18 +25,18 @@ function Register() {
     setError('');
 
     try {
-      const response = await fetch('https://employee-cal.onrender.com/register', {
+      const response = await fetch('http://localhost:4000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, password, role }),
+        body: JSON.stringify({ userId, password, role, name, contactNumber, address, joiningDate, email }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        navigate('/login');
+        navigate('/');
       } else {
         setError(data.error || 'Failed to register');
       }
@@ -91,6 +96,74 @@ function Register() {
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
               </select>
+            </div>
+
+            <div>
+              <label htmlFor="name" className="sr-only">Name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Full Name"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="contactNumber" className="sr-only">Contact Number</label>
+              <input
+                id="contactNumber"
+                name="contactNumber"
+                type="text"
+                value={contactNumber}
+                onChange={(e) => setContactNumber(e.target.value)}
+                required
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Contact Number"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="address" className="sr-only">Address</label>
+              <textarea
+                id="address"
+                name="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Address"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="joiningDate" className="sr-only">Joining Date</label>
+              <input
+                id="joiningDate"
+                name="joiningDate"
+                type="date"
+                value={joiningDate}
+                onChange={(e) => setJoiningDate(e.target.value)}
+                required
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="email" className="sr-only">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                placeholder="Email"
+              />
             </div>
           </div>
 
