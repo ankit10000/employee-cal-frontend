@@ -26,13 +26,13 @@ function Home() {
     const userToken = localStorage.getItem('empId');
     setToken(storedToken);
     setEmpId(userToken);
-}, []);
+  }, []);
 
-const handleLogout = () => {
+  const handleLogout = () => {
     localStorage.removeItem('authToken');
     setToken(null);
     window.location.replace('/') // Refresh the page after logout
-};
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!empId) {
@@ -42,7 +42,7 @@ const handleLogout = () => {
     setLoading(true);
     setError("");
 
-    let url = `http://localhost:4000/working-hours?empId=${empId}`;
+    let url = `https://employee-cal.onrender.com/working-hours?empId=${empId}`;
 
     if (startDate) {
       url += `&startDate=${startDate}`;
@@ -52,7 +52,7 @@ const handleLogout = () => {
     }
 
     // Assuming the token is stored in localStorage
-    const token = localStorage.getItem('authToken');  // Change this based on how your token is stored
+    const token = localStorage.getItem('authToken');
 
     try {
       const response = await fetch(url, {
@@ -118,15 +118,15 @@ const handleLogout = () => {
         </h2>
       </div>
       {token && (
-                <div className="absolute top-5 right-5">
-                    <button
-                        onClick={handleLogout}
-                        className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md shadow-md hover:bg-red-500"
-                    >
-                        Logout
-                    </button>
-                </div>
-            )}
+        <div className="absolute top-5 right-5">
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md shadow-md hover:bg-red-500"
+          >
+            Logout
+          </button>
+        </div>
+      )}
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm space-y-6">
         {/* Employee ID Input */}
         <div>

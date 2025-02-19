@@ -56,7 +56,7 @@
 //     setError("");
 
 //     // Construct the URL for the API call
-//     let url = `http://localhost:4000/all-working-hours?role=${adminRole}`;
+//     let url = `https://employee-cal.onrender.com/all-working-hours?role=${adminRole}`;
 
 //     if (empId) {
 //       url += `&empId=${empId}`;
@@ -288,7 +288,7 @@ function AllWorkingHours() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:4000/user", {
+        const response = await fetch("https://employee-cal.onrender.com/user", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
