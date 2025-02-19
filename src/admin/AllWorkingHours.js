@@ -37,7 +37,7 @@ function Home() {
 
     setToken(storedToken);
     setAdminRole(adminCheck);
-    setEmpId(userToken);
+    setEmpId(userToken === 'null' ? "" : userToken);
   }, [navigate]);
 
   const handleLogout = () => {
@@ -55,8 +55,12 @@ function Home() {
     setLoading(true);
     setError("");
 
+    // Construct the URL for the API call
     let url = `https://employee-cal.onrender.com/all-working-hours?role=${adminRole}`;
 
+    if (empId) {
+      url += `&empId=${empId}`;
+    }
     if (startDate) {
       url += `&startDate=${startDate}`;
     }
@@ -77,6 +81,7 @@ function Home() {
 
       if (response.ok) {
         setEmployeeData(data);
+        console.log(data);
       } else {
         setError(data.error || "Something went wrong.");
       }
@@ -86,7 +91,38 @@ function Home() {
       setLoading(false);
     }
   };
+  
+  const filteredRecords = employeeData.records ? employeeData.records.filter(record => {
+    const recordDate = new Date(record.date);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
 
+    if (start && end) {
+      return recordDate >= start && recordDate <= end;
+    }
+    if (start) {
+      return recordDate >= start;
+    }
+    if (end) {
+      return recordDate <= end;
+    }
+    return true;
+  }) : [];
+
+  const records = filteredRecords || [];
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = records.slice(indexOfFirstItem, indexOfLastItem) || [];
+  const totalPages = records.length ? Math.ceil(records.length / itemsPerPage) : 1;
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
   return (
     <div className="container mx-auto p-6">
       <div className="flex justify-between items-center">
@@ -97,39 +133,119 @@ function Home() {
       </div>
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div>
+          <label className="block">Employee ID</label>
+          <input 
+            type="text" 
+            value={empId} 
+            onChange={(e) => setEmpId(e.target.value)} 
+            className="border p-2 w-full" 
+            placeholder="Enter Employee ID"
+          />
+        </div>
+        <div>
           <label className="block">Start Date</label>
-          <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="border p-2 w-full" />
+          <input 
+            type="date" 
+            value={startDate} 
+            onChange={(e) => setStartDate(e.target.value)} 
+            className="border p-2 w-full" 
+          />
         </div>
         <div>
           <label className="block">End Date</label>
-          <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="border p-2 w-full" />
+          <input 
+            type="date" 
+            value={endDate} 
+            onChange={(e) => setEndDate(e.target.value)} 
+            className="border p-2 w-full" 
+          />
         </div>
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md w-full">
+        <button 
+          type="submit" 
+          className="px-4 py-2 bg-blue-600 text-white rounded-md w-full"
+        >
           {loading ? "Loading..." : "Find"}
         </button>
       </form>
       {error && <p className="text-red-500 mt-4">{error}</p>}
-      {employeeData.records && (
-        <table className="table-auto w-full mt-6 border">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="p-2">Date</th>
-              <th className="p-2">Check-In</th>
-              <th className="p-2">Check-Out</th>
-              <th className="p-2">Working Hours</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employeeData.records.map((record, idx) => (
-              <tr key={idx} className="border-t">
-                <td className="p-2">{record.date}</td>
-                <td className="p-2">{formatDate(record.checkIn)}</td>
-                <td className="p-2">{formatDate(record.checkOut)}</td>
-                <td className="p-2">{record.workingHours} hrs</td>
+      {employeeData && !loading && records.length > 0 && (
+        <div className="mt-10 overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+          <table className="min-w-full divide-y divide-gray-300">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">
+                  Date
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  CheckIn Time
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  CheckOut Time
+                </th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                  Working Hours
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-200 bg-white">
+              {currentItems.map((record, index) => {
+                return (
+                  <>
+                    {record.checkInCheckOutPairs.map((pair, idx) => {
+                      const checkInTime = new Date(pair.checkIn);
+                      const checkOutTime = new Date(pair.checkOut);
+                      const workingHours = (checkOutTime - checkInTime) / (1000 * 60 * 60);
+
+                      const isSameTime = checkInTime.getTime() === checkOutTime.getTime();
+                      const displayWorkingHours = isSameTime ? 0 : workingHours;
+
+                      return (
+                        <tr key={idx}>
+                          {idx === 0 && (
+                            <td rowSpan={record.checkInCheckOutPairs.length} className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{record.date}</td>
+                          )}
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{formatDate(pair.checkIn)}</td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{formatDate(pair.checkOut)}</td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                            {displayWorkingHours === 0 ? "0" : displayWorkingHours.toFixed(2)}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </>
+                );
+              })}
+            </tbody>
+          </table>
+
+          <div className="mt-4 text-right">
+            <p className="text-sm font-semibold text-gray-900">
+              Total Working Hours: {isNaN(employeeData.total_working_hours) ? "N/A" : employeeData.total_working_hours}
+            </p>
+          </div>
+
+          <div className="mt-4 flex justify-between">
+            <button
+              onClick={handlePreviousPage}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md"
+              disabled={currentPage === 1}
+            >
+              Previous
+            </button>
+            <button
+              onClick={handleNextPage}
+              className="px-4 py-2 bg-indigo-600 text-white rounded-md"
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+      {records.length === 0 && !loading && !error && (
+        <div className="mt-4 text-center text-gray-500">
+          <p>No data available for the given Employee ID within the selected date range.</p>
+        </div>
       )}
     </div>
   );
