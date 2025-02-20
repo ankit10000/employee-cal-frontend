@@ -6,6 +6,7 @@ import WorkingHours from './Employee/WorkingHours';
 import AllWorkingHours from './admin/AllWorkingHours';
 import Logout from './components/Logout'; 
 import EmployeeDetails from './admin/EmployeeDetails';
+import Profile from './components/Profile';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile/:userId" element={<Profile />} />
         <Route path="/working-hours" element={<WorkingHours />} /> 
         <Route path="/adminDashboard" element={<AllWorkingHours />} />
         <Route path="/employee_details/:userId" element={<EmployeeDetails />} />

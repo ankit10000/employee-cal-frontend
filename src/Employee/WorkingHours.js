@@ -109,6 +109,9 @@ function Home() {
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
+  const handleProfile = () => {
+    window.location.replace(`/profile/${empId}`) // Redirect to the profile page
+  }
 
   return (
     <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -118,6 +121,15 @@ function Home() {
         </h2>
       </div>
       {token && (
+       <>
+       <div className="absolute top-5 right-30">
+          <button
+            onClick={handleProfile}
+            className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-500"
+          >
+            Profile
+          </button>
+        </div>
         <div className="absolute top-5 right-5">
           <button
             onClick={handleLogout}
@@ -126,6 +138,7 @@ function Home() {
             Logout
           </button>
         </div>
+       </>
       )}
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm space-y-6">
         {/* Employee ID Input */}
@@ -175,9 +188,20 @@ function Home() {
           <button
             type="button"
             onClick={handleSubmit}
+            disabled={loading}
             className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            {loading ? "Loading..." : "Find"}
+            {loading ? (
+              <div className="flex items-center">
+                <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                Finding...
+              </div>
+            ) : (
+              'Find'
+            )}
           </button>
         </div>
       </div>

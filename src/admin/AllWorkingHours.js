@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 
 function AllWorkingHours() {
   // const [adminRole, setAdminRole] = useState("");
@@ -92,7 +93,9 @@ function AllWorkingHours() {
       {error && <p className="text-red-500 mt-4">{error}</p>}
 
       {loading ? (
-        <p className="mt-4">Loading...</p>
+        <div className="flex justify-center items-center h-screen w-full">
+    <ClipLoader color="#3498db" size={50} />
+  </div>
       ) : (
         <div className="mt-10 overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
           <table className="min-w-full divide-y divide-gray-300">

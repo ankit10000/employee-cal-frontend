@@ -34,15 +34,13 @@ function Login() {
         localStorage.setItem('role', data.role);
         localStorage.setItem('userId', data.userId);
         localStorage.setItem('empId', data.empId);
-        console.log(data);
-        // store empId if available
+
         if (data.role === 'employee') {
           navigate('/working-hours');
         } else if (data.role === 'admin') {
           navigate('/adminDashboard');
         }
-      }
-       else {
+      } else {
         setError(data.error || 'Invalid credentials');
       }
     } catch (error) {
@@ -93,9 +91,19 @@ function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="w-full flex justify-center items-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? (
+                <div className="flex items-center">
+                  <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                  </svg>
+                  Logging in...
+                </div>
+              ) : (
+                'Login'
+              )}
             </button>
           </div>
         </form>

@@ -45,8 +45,10 @@ function EmployeeDetails() {
                 const employeeData = await response.json();
                 setEmployee(employeeData);
                 console.log("Employee Data:", employeeData);
+                setLoading(false);
             } catch (error) {
                 console.error(error.message);
+                setLoading(false);
             }
         };
 
@@ -131,6 +133,7 @@ function EmployeeDetails() {
 
     return (
         <div className="container mx-auto p-6">
+
             <button onClick={() => navigate(-1)} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300">
                 Back
             </button>
@@ -180,9 +183,20 @@ function EmployeeDetails() {
                         <button
                             type="button"
                             onClick={handleSubmit}
+                            disabled={loading}
                             className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         >
-                            Find
+                            {loading ? (
+                                <div className="flex items-center">
+                                    <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
+                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                    </svg>
+                                    Finding...
+                                </div>
+                            ) : (
+                                'Find'
+                            )}
                         </button>
                     </div>
                 </div>
