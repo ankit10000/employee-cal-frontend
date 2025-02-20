@@ -32,7 +32,7 @@ function EmployeeDetails() {
     useEffect(() => {
         const fetchEmployee = async () => {
             try {
-                const response = await fetch(`https://employee-cal.onrender.com/users/${userId}`, {
+                const response = await fetch(`http://localhost:4000/users/${userId}`, {
                     method: "GET",
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem("authToken")}`,
@@ -62,7 +62,7 @@ function EmployeeDetails() {
         setLoading(true);
         setError("");
 
-        let url = `https://employee-cal.onrender.com/all-working-hours?empId=${userId}`;
+        let url = `http://localhost:4000/all-working-hours?empId=${userId}`;
 
         if (startDate) {
             url += `&startDate=${startDate}`;

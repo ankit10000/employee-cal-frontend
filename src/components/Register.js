@@ -25,7 +25,7 @@ function Register() {
     setError('');
 
     try {
-      const response = await fetch('https://employee-cal.onrender.com/register', {
+      const response = await fetch('http://localhost:4000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -50,6 +50,9 @@ function Register() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
+      <button onClick={() => navigate(-1)} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300">
+                Back
+            </button>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Register</h2>
         {error && <div className="text-red-500 text-center">{error}</div>}
 
@@ -69,7 +72,7 @@ function Register() {
               />
             </div>
 
-            <div>
+            <div className='space-y-2'>
               <label htmlFor="password" className="sr-only">Password</label>
               <input
                 id="password"
@@ -83,7 +86,7 @@ function Register() {
               />
             </div>
 
-            <div>
+            <div className='space-y-2'>
               <label htmlFor="role" className="sr-only">Role</label>
               <select
                 id="role"
@@ -98,7 +101,7 @@ function Register() {
               </select>
             </div>
 
-            <div>
+            <div className='space-y-2'>
               <label htmlFor="name" className="sr-only">Name</label>
               <input
                 id="name"
@@ -112,7 +115,7 @@ function Register() {
               />
             </div>
 
-            <div>
+            <div className='space-y-2'>
               <label htmlFor="contactNumber" className="sr-only">Contact Number</label>
               <input
                 id="contactNumber"
@@ -126,7 +129,7 @@ function Register() {
               />
             </div>
 
-            <div>
+            <div className='space-y-2'>
               <label htmlFor="address" className="sr-only">Address</label>
               <textarea
                 id="address"
@@ -139,7 +142,7 @@ function Register() {
               />
             </div>
 
-            <div>
+            <div className='space-y-2'>
               <label htmlFor="joiningDate" className="sr-only">Joining Date</label>
               <input
                 id="joiningDate"
@@ -152,7 +155,7 @@ function Register() {
               />
             </div>
 
-            <div>
+            <div className='space-y-2'>
               <label htmlFor="email" className="sr-only">Email</label>
               <input
                 id="email"
