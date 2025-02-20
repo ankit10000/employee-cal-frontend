@@ -42,7 +42,7 @@ function Home() {
     setLoading(true);
     setError("");
 
-    let url = `http://localhost:4000/working-hours?empId=${empId}`;
+    let url = `https://employee-cal.onrender.com/working-hours?empId=${empId}`;
 
     if (startDate) {
       url += `&startDate=${startDate}`;

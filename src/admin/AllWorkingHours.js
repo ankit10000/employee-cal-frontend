@@ -34,7 +34,7 @@ function AllWorkingHours() {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await fetch("http://localhost:4000/user", {
+        const response = await fetch("https://employee-cal.onrender.com/user", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
